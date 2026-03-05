@@ -22,7 +22,9 @@ export const useCodeExecution = (
 
     // Initialize Socket.IO connection to backend
     useEffect(() => {
-        const socket = io(API_URL, { transports: ['websocket', 'polling'] });
+        const socket = io("https://codecompiler-cewu.onrender.com", {
+              transports: ["websocket"],
+        });
         socketRef.current = socket;
 
         socket.on('connect', () => {
@@ -113,3 +115,4 @@ export const useCodeExecution = (
 
     return { isRunning, isInitializing, initPyodide, runCode };
 };
+
