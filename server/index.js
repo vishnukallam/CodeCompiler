@@ -6,17 +6,13 @@ const app = express();
 const server = http.createServer(app);
 
 const io = new Server(server, {
-    cors: {
-        origin: (origin, callback) => {
-            const allowedOrigins = [process.env.FRONTEND_URL, 'http://localhost:3000'].filter(Boolean);
-            if (!origin || allowedOrigins.includes(origin) || process.env.NODE_ENV !== 'production') {
-                callback(null, true);
-            } else {
-                callback(new Error('Not allowed by CORS'));
-            }
-        },
-        methods: ['GET', 'POST']
-    }
+  cors: {
+    origin: [
+      "http://localhost:3000",
+      "https://code-compiler-sand.vercel.app"
+    ],
+    methods: ["GET", "POST"]
+  }
 });
 
 app.use(cors());
