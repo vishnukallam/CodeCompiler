@@ -60,19 +60,22 @@ function App() {
 
   // Fix corrupted Java sessionStorage
   useEffect(() => {
+
     const javaCode = sessionStorage.getItem('code_java');
 
     if (javaCode === templates.python) {
+
       sessionStorage.setItem('code_java', templates.java);
 
       if (language === 'java') {
         setCode(templates.java);
       }
+
     }
 
   }, [language]);
 
-  // Initialize Terminal
+  // Initialize Terminal (runs only once)
   useLayoutEffect(() => {
 
     if (!terminalRef.current || xterm.current) return;
@@ -80,9 +83,9 @@ function App() {
     const term = new Terminal({
       cursorBlink: true,
       theme: {
-        background: theme === 'dark' ? '#1e1e1e' : '#ffffff',
-        foreground: theme === 'dark' ? '#ffffff' : '#202124',
-        cursor: theme === 'dark' ? '#47cf73' : '#2196F3',
+        background: '#1e1e1e',
+        foreground: '#ffffff',
+        cursor: '#47cf73',
         selectionBackground: '#2196F380',
       },
       fontSize: 14,
@@ -133,10 +136,9 @@ function App() {
 
     };
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initPyodide]);
 
-  // Theme update for terminal
+  // Update terminal theme dynamically
   useEffect(() => {
 
     if (xterm.current) {
@@ -200,24 +202,6 @@ function App() {
         @keyframes titleGlow {
           from { text-shadow: 0 0 5px ${colors.accent}, 0 0 10px ${colors.accent}22; }
           to { text-shadow: 0 0 15px ${colors.accent}, 0 0 30px ${colors.accent}88; }
-        }
-
-        .stylish-c-1 {
-          font-family: "Playfair Display", serif !important;
-          font-style: italic !important;
-          font-weight: 900 !important;
-          font-size: 1.2em !important;
-          margin-right: -1px !important;
-          color: ${theme === 'light' ? '#000000' : colors.accent} !important;
-        }
-
-        .stylish-c-2 {
-          font-family: "Georgia", serif !important;
-          font-style: italic !important;
-          font-weight: 900 !important;
-          font-size: 1.1em !important;
-          margin-right: -1px !important;
-          color: ${theme === 'light' ? '#000000' : colors.accent} !important;
         }
 
         body {
