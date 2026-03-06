@@ -16,5 +16,8 @@
     "fs-extra": "^11.3.4",
     "socket.io": "^4.8.3",
     "uuid": "^9.0.1"
+  },
+  "engines": {
+    "node": "18.x"
   }
 }
