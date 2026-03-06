@@ -1,12 +1,11 @@
 services:
   - type: web
-    name: compile-server
-    env: node
-    rootDir: server
+    name: codecompiler
+    runtime: node
     buildCommand: npm install
-    startCommand: node index.js
+    startCommand: node server/index.js
     envVars:
-      - key: PORT
-        value: 5000
-      - key: FRONTEND_URL
-        sync: false
+      - key: NODE_VERSION
+        value: 18
+    aptPackages:
+      - openjdk-17-jdk
