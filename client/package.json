@@ -2,6 +2,9 @@
   "name": "client",
   "version": "1.0.0",
   "homepage": ".",
+   "engines": {
+      "node": "24.x"
+    },
   "dependencies": {
     "@monaco-editor/react": "^4.6.0",
     "@testing-library/jest-dom": "^5.17.0",
@@ -43,8 +46,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "engines": {
-    "node": "24.x"
   }
+ 
 }
