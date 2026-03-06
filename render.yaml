@@ -1,11 +1,14 @@
 services:
   - type: web
-    name: codecompiler
+    name: codecompiler-cewu
     runtime: node
+    plan: free
     buildCommand: npm install
     startCommand: node server/index.js
+
     envVars:
       - key: NODE_VERSION
         value: 18
+
     aptPackages:
       - openjdk-17-jdk
