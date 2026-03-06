@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "engines": {
-    "node": ">=18"
+    "node": "24.x"
   },
   "scripts": {
     "start": "node index.js"
@@ -16,8 +16,5 @@
     "fs-extra": "^11.3.4",
     "socket.io": "^4.8.3",
     "uuid": "^9.0.1"
-  },
-  "engines": {
-    "node": "24.x"
   }
 }
