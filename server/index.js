@@ -18,7 +18,14 @@ const allowedOrigins = [
 
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+      // Allow local development and specific Vercel URL
+      if (!origin || allowedOrigins.includes(origin) || origin.endsWith(".vercel.app")) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     methods: ["GET", "POST"],
     credentials: true
   })
@@ -30,7 +37,7 @@ app.use(express.json());
 
 const io = new Server(server, {
   cors: {
-    origin: allowedOrigins,
+    origin: "*", // Socket.io CORS can be more permissive if app CORS is restrictive enough
     methods: ["GET", "POST"]
   },
   transports: ["websocket", "polling"]
@@ -89,14 +96,14 @@ io.on("connection", (socket) => {
           onError,
           onStatus
         });
-      } 
+      }
       else if (language === "python") {
         currentProcess = await executePython(code, {
           onOutput,
           onError,
           onStatus
         });
-      } 
+      }
       else {
         socket.emit("stderr", "Unsupported language");
       }
