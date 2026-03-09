@@ -1,13 +1,9 @@
 import { useState, useCallback, useEffect, useRef, MutableRefObject } from 'react';
 import { Terminal } from '@xterm/xterm';
 import { io, Socket } from 'socket.io-client';
+// Types & Constants
 import { Language } from '../types';
 import { API_URL } from '../constants';
-
-// Declare global for Pyodide (kept for fallback/reuse)
-declare global {
-    interface Window { loadPyodide: any; }
-}
 
 export const useCodeExecution = (
     language: Language,
@@ -24,7 +20,7 @@ export const useCodeExecution = (
     // Initialize Socket.IO connection to backend
     useEffect(() => {
 
-        const socket = io("https://codecompiler-cewu.onrender.com", {
+        const socket = io(API_URL, {
             transports: ["websocket"],
             reconnection: true,
             reconnectionAttempts: 10,
@@ -95,8 +91,7 @@ export const useCodeExecution = (
             socket.disconnect();
         };
 
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [setPlotImage, setOutputTab, xterm]); // API_URL is a module constant, setIsRunning is stable
 
     // Enable terminal keyboard input forwarding (for stdin programs)
     useEffect(() => {
@@ -115,7 +110,7 @@ export const useCodeExecution = (
                     terminal.write(data);
                 }
 
-                socketRef.current.emit('input', data);
+                socketRef.current?.emit('input', data);
 
             }
 
@@ -168,7 +163,7 @@ export const useCodeExecution = (
 
         }
 
-        socketRef.current.emit('run-code', {
+        socketRef.current?.emit('run-code', {
             language,
             code: processedCode
         });

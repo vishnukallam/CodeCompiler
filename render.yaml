@@ -3,12 +3,14 @@ services:
     name: codecompiler-cewu
     runtime: node
     plan: free
-    buildCommand: npm install
-    startCommand: node server/index.js
+    buildCommand: cd server && npm install
+    startCommand: cd server && node index.js
 
     envVars:
       - key: NODE_VERSION
-        value: 18
+        value: 20
 
     aptPackages:
       - openjdk-17-jdk
+      - python3
+      - python3-pip
