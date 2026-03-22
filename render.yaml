@@ -1,10 +1,16 @@
 services:
   - type: web
     name: codecompiler-cewu
-    runtime: docker
+    runtime: node
     plan: free
-    rootDir: server
+    buildCommand: cd server && npm install
+    startCommand: cd server && node index.js
 
     envVars:
-      - key: PORT
-        value: 5000
+      - key: NODE_VERSION
+        value: 20
+
+    aptPackages:
+      - openjdk-17-jdk
+      - python3
+      - python3-pip

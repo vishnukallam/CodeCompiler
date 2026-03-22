@@ -12,6 +12,8 @@ const fs = require('fs-extra');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 
+const pythonCmd = process.platform === 'win32' ? 'python' : 'python3';
+
 const TEMP_DIR = path.join(__dirname, 'temp');
 const LIB_DIR = path.join(__dirname, 'lib');
 
@@ -104,7 +106,7 @@ async function installPackages(packages, onStatus) {
     for (const pkg of packages) {
         onStatus?.(`Installing package: ${pkg}...`);
         await new Promise((resolve) => {
-            exec(`python -m pip install ${pkg} --quiet`, (err, stdout, stderr) => {
+            exec(`${pythonCmd} -m pip install ${pkg} --quiet`, (err, stdout, stderr) => {
                 if (err) {
                     onStatus?.(`Warning: Failed to install ${pkg}`);
                 }
@@ -165,7 +167,7 @@ except Exception:
     onStatus?.('Running...');
 
     return new Promise((resolve) => {
-        const proc = spawn('python', [scriptPath], {
+        const proc = spawn(pythonCmd, [scriptPath], {
             cwd: TEMP_DIR,
             env: { ...process.env, PYTHONIOENCODING: 'utf-8' },
         });
