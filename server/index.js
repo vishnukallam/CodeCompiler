@@ -3,11 +3,26 @@ const express = require("express");
 const cors = require("cors");
 const http = require("http");
 const { Server } = require("socket.io");
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs-extra");
 
 const { executeJava, executePython } = require("./execution");
 
 const app = express();
 const server = http.createServer(app);
+
+/* -------------------- FILE STORAGE SETUP -------------------- */
+
+const STORAGE_DIR = path.join(__dirname, "temp"); // Reuse temp as persistent storage
+fs.ensureDirSync(STORAGE_DIR);
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, STORAGE_DIR),
+  filename: (req, file, cb) => cb(null, file.originalname)
+});
+
+const upload = multer({ storage });
 
 /* -------------------- CORS CONFIG -------------------- */
 
@@ -50,6 +65,62 @@ app.get("/api/status", (req, res) => {
     status: "online",
     engine: "Native Java & Python (Socket.io Enabled)"
   });
+});
+
+/* -------------------- FILE EXPLORER ROUTES -------------------- */
+
+app.get("/api/files", async (req, res) => {
+  try {
+    const files = await fs.readdir(STORAGE_DIR);
+    const details = await Promise.all(
+      files.map(async (file) => {
+        const stats = await fs.stat(path.join(STORAGE_DIR, file));
+        return {
+          name: file,
+          size: stats.size,
+          mtime: stats.mtime,
+          isDir: stats.isDirectory()
+        };
+      })
+    );
+    res.json(details.filter(f => !f.isDir));
+  } catch (err) {
+    res.status(500).json({ error: "Failed to list files" });
+  }
+});
+
+app.post("/api/files/upload", upload.single("file"), (req, res) => {
+  if (!req.file) return res.status(400).json({ error: "No file uploaded" });
+  res.json({ message: "File uploaded successfully", file: req.file.originalname });
+});
+
+app.get("/api/files/download/:filename", (req, res) => {
+  const filePath = path.join(STORAGE_DIR, req.params.filename);
+  if (fs.existsSync(filePath)) {
+    res.download(filePath);
+  } else {
+    res.status(404).json({ error: "File not found" });
+  }
+});
+
+app.delete("/api/files/:filename", async (req, res) => {
+  try {
+    await fs.remove(path.join(STORAGE_DIR, req.params.filename));
+    res.json({ message: "File deleted" });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to delete file" });
+  }
+});
+
+app.post("/api/files/save", async (req, res) => {
+  const { filename, code } = req.body;
+  if (!filename || !code) return res.status(400).json({ error: "Filename and code required" });
+  try {
+    await fs.writeFile(path.join(STORAGE_DIR, filename), code, 'utf8');
+    res.json({ message: "File saved", filename });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to save file" });
+  }
 });
 
 /* -------------------- HTTP EXECUTION (LEGACY) -------------------- */

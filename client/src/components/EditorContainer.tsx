@@ -1,7 +1,8 @@
 import React from 'react';
 import Editor from '@monaco-editor/react';
 import { Language, ThemeColors } from '../types';
-import { getFileName } from '../constants';
+import { getFileName, API_URL } from '../constants';
+import axios from 'axios';
 
 interface EditorContainerProps {
     language: Language;
@@ -15,31 +16,54 @@ const EditorContainer: React.FC<EditorContainerProps> = ({
     language, theme, code, setCode, colors
 }) => {
     return (
-        <div style={{
-            flex: 1.2, borderRadius: '12px', overflow: 'hidden',
-            backgroundColor: theme === 'light' ? '#ffffff' : colors.surface,
-            boxShadow: theme === 'light'
-                ? '0 4px 20px rgba(0,0,0,0.08)'
-                : `0 8px 32px ${colors.shadow}`,
-            border: `1px solid ${colors.border}`,
+        <div className="premium-card" style={{
+            flex: 1.2, overflow: 'hidden',
+            backgroundColor: theme === 'dark' ? 'rgba(39, 41, 61, 0.7)' : '#ffffff',
             display: 'flex', flexDirection: 'column',
             transition: 'all 0.4s ease'
         }}>
             <div style={{
-                height: '40px', display: 'flex', alignItems: 'center',
-                backgroundColor: theme === 'light' ? '#f0f2f5' : '#1a1a1a',
-                borderBottom: `1px solid ${colors.border}`
+                height: '50px', display: 'flex', alignItems: 'center',
+                backgroundColor: theme === 'dark' ? 'rgba(0,0,0,0.1)' : '#f0f2f5',
+                borderBottom: `1px solid ${colors.border}`,
+                padding: '0 20px'
             }}>
-                <div style={{
-                    height: '100%', padding: '0 20px', display: 'flex', alignItems: 'center',
-                    backgroundColor: theme === 'light' ? '#ffffff' : colors.surface,
-                    borderRight: `1px solid ${colors.border}`,
-                    fontSize: '0.85rem', fontWeight: 600, color: colors.text
-                }}>
-                    {getFileName(language)}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                    <div style={{
+                        fontSize: '0.8rem', fontWeight: 700, color: colors.text,
+                        textTransform: 'uppercase', letterSpacing: '1px',
+                        display: 'flex', alignItems: 'center', gap: '10px'
+                    }}>
+                        <div style={{
+                            width: '8px', height: '8px', borderRadius: '50%',
+                            backgroundColor: colors.accent,
+                            boxShadow: `0 0 8px ${colors.accent}`
+                        }}></div>
+                        {getFileName(language)}
+                    </div>
+                    <button 
+                        onClick={() => {
+                            const filename = prompt('Enter filename to save:', getFileName(language));
+                            if (filename) {
+                                axios.post(`${API_URL}/api/files/save`, { filename, code })
+                                    .then(() => alert('File saved successfully!'))
+                                    .catch(err => alert('Failed to save file: ' + err.message));
+                            }
+                        }}
+                        style={{
+                            background: 'none', border: `1px solid ${colors.accent}44`, 
+                            color: colors.accent, borderRadius: '4px', fontSize: '0.65rem',
+                            padding: '4px 10px', cursor: 'pointer', textTransform: 'uppercase',
+                            fontWeight: 700, transition: 'all 0.2s'
+                        }}
+                        onMouseOver={(e) => e.currentTarget.style.backgroundColor = `${colors.accent}22`}
+                        onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                    >
+                        Save to Storage
+                    </button>
                 </div>
             </div>
-            <div style={{ flex: 1, position: 'relative' }}>
+            <div style={{ flex: 1, position: 'relative', padding: '10px' }}>
                 <Editor
                     height="100%"
                     language={language}
@@ -49,7 +73,7 @@ const EditorContainer: React.FC<EditorContainerProps> = ({
                     options={{
                         minimap: { enabled: false },
                         fontSize: 15,
-                        padding: { top: 20 },
+                        padding: { top: 10 },
                         scrollBeyondLastLine: false,
                         automaticLayout: true,
                         fontFamily: '"Fira Code", monospace',
@@ -58,46 +82,7 @@ const EditorContainer: React.FC<EditorContainerProps> = ({
                         renderLineHighlight: 'all',
                         lineHeight: 1.6,
                         lineNumbers: 'on',
-                        scrollbar: { vertical: 'hidden', horizontal: 'hidden' },
-                        quickSuggestions: { other: true, comments: true, strings: true },
-                        quickSuggestionsDelay: 0,
-                        suggestOnTriggerCharacters: true,
-                        acceptSuggestionOnEnter: 'on',
-                        tabCompletion: 'on',
-                        parameterHints: { enabled: true },
-                        formatOnType: true,
-                        autoClosingBrackets: 'always',
-                        autoClosingQuotes: 'always',
-                        autoClosingOvertype: 'always',
-                        autoIndent: 'advanced',
-                        wordBasedSuggestions: 'allDocuments',
-                        suggest: {
-                            showFunctions: true,
-                            showKeywords: true,
-                            showModules: true,
-                            showSnippets: true,
-                            showClasses: true,
-                            showColors: true,
-                            showConstants: true,
-                            showConstructors: true,
-                            showEvents: true,
-                            showFields: true,
-                            showFiles: true,
-                            showFolders: true,
-                            showInterfaces: true,
-                            showIssues: true,
-                            showMethods: true,
-                            showOperators: true,
-                            showProperties: true,
-                            showReferences: true,
-                            showStructs: true,
-                            showTypeParameters: true,
-                            showUnits: true,
-                            showUsers: true,
-                            showValues: true,
-                            showVariables: true,
-                            showWords: true
-                        }
+                        scrollbar: { vertical: 'hidden', horizontal: 'hidden' }
                     }}
                 />
             </div>

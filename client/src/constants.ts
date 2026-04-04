@@ -11,33 +11,32 @@ export const templates: Record<Language, string> = {
 
 export const themeConfig: ThemeConfig = {
     dark: {
-        bg: '#121212',
-        surface: '#1e1e1e',
-        accent: '#47cf73',
-        text: '#ffffff',
-        textMuted: '#a0a0a0',
-        headerBg: '#1a1a1a',
+        bg: '#1e1e2f',
+        surface: '#27293d',
+        accent: '#e14eca',
+        text: 'rgba(255, 255, 255, 0.8)',
+        textMuted: 'rgba(255, 255, 255, 0.6)',
+        headerBg: 'rgba(30, 30, 47, 0.95)',
         buttonColor: '#ffffff',
-        border: '#333333',
-        shadow: 'rgba(0,0,0,0.5)',
+        border: 'rgba(255, 255, 255, 0.1)',
+        shadow: '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
         editorTheme: 'vs-dark'
     },
     light: {
-        bg: '#f8f9fa',
+        bg: '#f4f5f7',
         surface: '#ffffff',
-        accent: '#2196F3',
-        text: '#202124',
-        textMuted: '#5f6368',
-        headerBg: '#ffffff',
+        accent: '#ba54f5',
+        text: '#525f7f',
+        textMuted: '#8898aa',
+        headerBg: 'rgba(255, 255, 255, 0.9)',
         buttonColor: '#ffffff',
-        border: '#dadce0',
-        shadow: 'rgba(0,0,0,0.06)',
-        editorTheme: 'light',
-        premiumShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05)'
+        border: 'rgba(0, 0, 0, 0.05)',
+        shadow: '0 8px 32px 0 rgba(31, 38, 135, 0.07)',
+        editorTheme: 'light'
     }
 };
 
-export const getFileName = (lang: string) => {
+export const getFileName = (lang: Language): string => {
     switch (lang) {
         case 'python': return 'main.py';
         case 'java': return 'Main.java';
@@ -45,5 +44,5 @@ export const getFileName = (lang: string) => {
     }
 };
 
-export const API_URL = process.env.REACT_APP_API_URL || 'https://codecompiler-cewu.onrender.com';
+export const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 

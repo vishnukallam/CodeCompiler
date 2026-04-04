@@ -15,6 +15,7 @@ import Header from './components/Header';
 import EditorContainer from './components/EditorContainer';
 import OutputContainer from './components/OutputContainer';
 import AboutModal from './components/AboutModal';
+import FileExplorer from './components/FileExplorer';
 
 function App() {
 
@@ -192,22 +193,46 @@ function App() {
     }}>
 
       <style>{`
-        .premium-gradient-title {
-          color: ${theme === 'light' ? '#000000' : colors.accent} !important;
-          text-shadow: ${theme === 'light' ? 'none' : `0 0 10px ${colors.accent}, 0 0 20px ${colors.accent}44`} !important;
-          animation: ${theme === 'light' ? 'none' : 'titleGlow 3s ease-in-out infinite alternate'} !important;
-          display: inline-block !important;
-        }
-
-        @keyframes titleGlow {
-          from { text-shadow: 0 0 5px ${colors.accent}, 0 0 10px ${colors.accent}22; }
-          to { text-shadow: 0 0 15px ${colors.accent}, 0 0 30px ${colors.accent}88; }
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600&display=swap');
 
         body {
           margin: 0;
           padding: 0;
           overflow: hidden !important;
+          font-family: 'Inter', sans-serif;
+          background: ${colors.bg};
+          background-image: ${theme === 'dark' 
+            ? 'radial-gradient(circle at 50% 50%, #1e1e2f 0%, #171941 100%)' 
+            : 'radial-gradient(circle at 50% 50%, #f4f5f7 0%, #e3e4e9 100%)'};
+        }
+
+        .premium-card {
+          background: ${colors.surface} !important;
+          border-radius: 12px !important;
+          border: 1px solid ${colors.border} !important;
+          box-shadow: ${colors.shadow} !important;
+          backdrop-filter: blur(10px) !important;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }
+
+        .premium-card:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.45) !important;
+        }
+
+        .premium-gradient-title {
+          background: linear-gradient(to right, ${colors.accent}, #ba54f5) !important;
+          -webkit-background-clip: text !important;
+          -webkit-text-fill-color: transparent !important;
+          font-family: 'Poppins', sans-serif;
+          font-weight: 700;
+          letter-spacing: -0.5px;
+          animation: titleGlow 3s ease-in-out infinite alternate !important;
+        }
+
+        @keyframes titleGlow {
+          from { filter: drop-shadow(0 0 2px ${colors.accent}44); }
+          to { filter: drop-shadow(0 0 8px ${colors.accent}aa); }
         }
 
         * {
@@ -217,6 +242,33 @@ function App() {
 
         *::-webkit-scrollbar {
           display: none;
+        }
+
+        .glass-header {
+          background: ${colors.headerBg} !important;
+          backdrop-filter: blur(15px) !important;
+          border-bottom: 1px solid ${colors.border} !important;
+          box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1) !important;
+        }
+
+        .btn-premium {
+          background: linear-gradient(135deg, ${colors.accent}, #ba54f5) !important;
+          border: none !important;
+          color: white !important;
+          border-radius: 8px !important;
+          font-weight: 600 !important;
+          transition: all 0.2s ease !important;
+          cursor: pointer !important;
+          box-shadow: 0 4px 15px 0 ${colors.accent}44 !important;
+        }
+
+        .btn-premium:hover {
+           transform: scale(1.05);
+           box-shadow: 0 6px 20px 0 ${colors.accent}66 !important;
+        }
+
+        .btn-premium:active {
+           transform: scale(0.95);
         }
       `}</style>
 
@@ -235,27 +287,34 @@ function App() {
         setOutputTab={setOutputTab}
       />
 
-      <div style={{ display: 'flex', flex: 1, minHeight: 0, padding: '15px', gap: '15px' }}>
-
-        <EditorContainer
-          language={language}
-          theme={theme}
-          code={code}
-          setCode={setCode}
+      <div style={{ display: 'flex', flex: 1, minHeight: 0, overflow: 'hidden' }}>
+        
+        <FileExplorer 
           colors={colors}
+          theme={theme}
         />
 
-        <OutputContainer
-          theme={theme}
-          colors={colors}
-          outputTab={outputTab}
-          setOutputTab={setOutputTab}
-          plotImage={plotImage}
-          terminalRef={terminalRef}
-          copyTerminalOutput={copyTerminalOutput}
-          clearTerminal={clearTerminal}
-          language={language}
-        />
+        <div style={{ display: 'flex', flex: 1, minHeight: 0, padding: '15px', gap: '15px' }}>
+          <EditorContainer
+            language={language}
+            theme={theme}
+            code={code}
+            setCode={setCode}
+            colors={colors}
+          />
+
+          <OutputContainer
+            theme={theme}
+            colors={colors}
+            outputTab={outputTab}
+            setOutputTab={setOutputTab}
+            plotImage={plotImage}
+            terminalRef={terminalRef}
+            copyTerminalOutput={copyTerminalOutput}
+            clearTerminal={clearTerminal}
+            language={language}
+          />
+        </div>
 
       </div>
 

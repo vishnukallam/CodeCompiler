@@ -72,11 +72,11 @@ const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose, colors }) => {
                         fontSize: '1rem', fontWeight: 700, cursor: 'pointer',
                         transition: 'all 0.3s'
                     }}
-                    onMouseOver={(e) => {
+                    onMouseOver={(e: React.MouseEvent<HTMLButtonElement>) => {
                         e.currentTarget.style.transform = 'translateY(-2px)';
                         e.currentTarget.style.boxShadow = `0 5px 15px ${colors.accent}44`;
                     }}
-                    onMouseOut={(e) => {
+                    onMouseOut={(e: React.MouseEvent<HTMLButtonElement>) => {
                         e.currentTarget.style.transform = 'translateY(0)';
                         e.currentTarget.style.boxShadow = 'none';
                     }}
