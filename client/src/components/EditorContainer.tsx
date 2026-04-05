@@ -45,9 +45,13 @@ const EditorContainer: React.FC<EditorContainerProps> = ({
                         onClick={() => {
                             const filename = prompt('Enter filename to save:', getFileName(language));
                             if (filename) {
-                                axios.post(`${API_URL}/api/files/save`, { filename, code })
-                                    .then(() => alert('File saved successfully!'))
-                                    .catch(err => alert('Failed to save file: ' + err.message));
+                                const blob = new Blob([code], { type: 'text/plain' });
+                                const url = URL.createObjectURL(blob);
+                                const a = document.createElement('a');
+                                a.href = url;
+                                a.download = filename;
+                                a.click();
+                                URL.revokeObjectURL(url);
                             }
                         }}
                         style={{

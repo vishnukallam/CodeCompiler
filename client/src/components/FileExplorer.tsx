@@ -100,24 +100,6 @@ const FileExplorer: React.FC<FileExplorerProps> = ({ colors, theme }) => {
                 }}>
                     Files
                 </h3>
-                <button 
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={isUploading}
-                    style={{
-                        background: 'none', border: 'none', color: colors.accent,
-                        cursor: 'pointer', fontSize: '1.2rem', padding: '0 5px',
-                        display: 'flex', alignItems: 'center', transition: 'all 0.2s'
-                    }}
-                    title="Upload File"
-                >
-                    +
-                </button>
-                <input 
-                    type="file" 
-                    ref={fileInputRef} 
-                    style={{ display: 'none' }} 
-                    onChange={handleUpload} 
-                />
             </div>
 
             <div style={{ flex: 1, overflowY: 'auto', padding: '10px' }}>

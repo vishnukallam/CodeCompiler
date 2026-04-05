@@ -15,7 +15,6 @@ const { v4: uuidv4 } = require('uuid');
 const pythonCmd = process.platform === 'win32' ? 'python' : 'python3';
 
 const TEMP_DIR = path.join(__dirname, 'temp');
-const LIB_DIR = path.join(__dirname, 'lib');
 
 const MAVEN_JARS = {
     'org.json': {
@@ -106,7 +105,7 @@ async function installPackages(packages, onStatus) {
     for (const pkg of packages) {
         onStatus?.(`Installing package: ${pkg}...`);
         await new Promise((resolve) => {
-            exec(`${pythonCmd} -m pip install ${pkg} --quiet`, (err, stdout, stderr) => {
+            exec(`${pythonCmd} -m pip install ${pkg} --target="${TEMP_DIR}" --quiet`, (err, stdout, stderr) => {
                 if (err) {
                     onStatus?.(`Warning: Failed to install ${pkg}`);
                 }
@@ -169,7 +168,7 @@ except Exception:
     return new Promise((resolve) => {
         const proc = spawn(pythonCmd, [scriptPath], {
             cwd: TEMP_DIR,
-            env: { ...process.env, PYTHONIOENCODING: 'utf-8' },
+            env: { ...process.env, PYTHONIOENCODING: 'utf-8', PYTHONPATH: TEMP_DIR },
         });
 
         proc.stdout.on('data', (data) => onOutput?.(data.toString('utf8')));
@@ -213,7 +212,6 @@ except Exception:
  */
 async function executeJava(code, { onOutput, onError, onStatus } = {}) {
     await fs.ensureDir(TEMP_DIR);
-    await fs.ensureDir(LIB_DIR);
 
     const cleanedCode = code.replace(/^[ \t]*package[ \t]+[a-zA-Z0-9._]+[ \t]*;/gm, '').trim();
     const classMatch = cleanedCode.match(/public\s+class\s+(\w+)/);
@@ -242,7 +240,7 @@ async function executeJava(code, { onOutput, onError, onStatus } = {}) {
 
     if (requiredJars.size > 0) {
         for (const jarInfo of requiredJars) {
-            const jarPath = path.join(LIB_DIR, jarInfo.filename);
+            const jarPath = path.join(TEMP_DIR, jarInfo.filename);
             if (!(await fs.pathExists(jarPath))) {
                 onStatus?.(`Downloading dependencies from cloud...`);
                 try {
@@ -255,9 +253,9 @@ async function executeJava(code, { onOutput, onError, onStatus } = {}) {
     }
 
     const sep = process.platform === 'win32' ? ';' : ':';
-    const jars = (await fs.readdir(LIB_DIR))
+    const jars = (await fs.readdir(TEMP_DIR))
         .filter(f => f.endsWith('.jar'))
-        .map(f => path.join(LIB_DIR, f));
+        .map(f => path.join(TEMP_DIR, f));
     const classpath = [workDir, ...jars].join(sep);
 
     // Compile
